@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+ Copyright (C) 2014 - Open Source Geospatial Foundation. All rights reserved.
+ This code is licensed under the GPL 2.0 license, available at the root
+ application directory.
+ -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.geoserver</groupId>
+    <artifactId>community</artifactId>
+    <version>2.11-SNAPSHOT</version>
+  </parent>
+
+  <groupId>org.geoserver.community</groupId>
+  <artifactId>gs-signal</artifactId>
+  <packaging>jar</packaging>
+  <version>2.11-SNAPSHOT</version>
+  <name>Signal Module</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.geoserver</groupId>
+      <artifactId>gs-main</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geoserver</groupId>
+      <artifactId>gs-wfs</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-geojson</artifactId>
+      <version>${gt.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotools</groupId>
+      <artifactId>gt-opengis</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.kafka</groupId>
+      <artifactId>kafka-clients</artifactId>
+      <version>0.10.0.0</version>
+    </dependency>
+  </dependencies>
+
+ <repositories>
+  <repository>
+   <id>boundless</id>
+   <name>Boundless Maven Repository</name>
+   <url>https://repo.boundlessgeo.com/main/</url>
+   <!-- contains snapshot and release (including third-party-dependences)               -->
+   <!-- Restlet maven Repository (http://maven.restlet.org)                             -->
+   <!-- ucar (https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases) -->
+   <snapshots>
+     <enabled>true</enabled>
+   </snapshots>
+   <releases>
+     <enabled>true</enabled>
+   </releases>
+  </repository>
+
+  <repository>
+    <id>osgeo</id>
+    <name>Open Source Geospatial Foundation Repository</name>
+    <url>http://download.osgeo.org/webdav/geotools/</url>
+    <!-- release repository used by geotools (and third-party dependencies) -->
+  </repository>
+ </repositories>
+
+</project>
