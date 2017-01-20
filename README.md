@@ -32,3 +32,18 @@ Ex:
   }
 }
 ```
+
+
+## Running in Docker
+`docker-compose` will create an environment that includes zookeeper, kafka, postgis, and geoserver. By default GeoServer data directory is bound to `$HOME/geoserver_data` and the postgres data directory is bound to `$HOME/postgres_data` so that you don't have to recreate layers/tables/etc. between builds.
+
+The GeoServer Dockerfile is copied from https://github.com/kartoza/docker-geoserver with a slight modification to allow changing the GeoServer version using the `GS_VERSION` build-arg.
+
+The plugin is built and included in the `resources/plugins` folder. Other GeoServer plugin zipfiles can also be included in that folder.
+
+1. Build the plugin which will create the zip in the `resources/plugins` folder.
+    - `mvn package`
+2. Build the GeoServer docker image.
+    - `docker-compose build geoserver`
+3. Run the docker cluster.
+    - `docker-compose up`
