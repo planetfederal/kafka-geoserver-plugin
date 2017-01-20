@@ -34,7 +34,11 @@ public class SignalEvent {
   }
 
   public String getLayerName() {
-    return this.layer.getPrefix() + "." + this.layer.getLocalPart();
+    if (this.layer.getPrefix() != null && !this.layer.getPrefix().isEmpty()) {
+      return this.layer.getPrefix() + "." + this.layer.getLocalPart();
+    } else {
+      return this.layer.getLocalPart();
+    }
   }
 
   /**
