@@ -32,17 +32,22 @@
     </dependency>
     <dependency>
       <groupId>org.geotools</groupId>
-      <artifactId>gt-geojson</artifactId>
-      <version>${gt.version}</version>
+      <artifactId>gt-opengis</artifactId>
     </dependency>
     <dependency>
       <groupId>org.geotools</groupId>
-      <artifactId>gt-opengis</artifactId>
+      <artifactId>gt-geojson</artifactId>
+      <version>${gt.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.kafka</groupId>
       <artifactId>kafka-clients</artifactId>
       <version>0.10.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.boundlessgeo.spatialconnect</groupId>
+      <artifactId>schema</artifactId>
+      <version>0.7</version>
     </dependency>
   </dependencies>
 
@@ -69,7 +74,6 @@
       <!-- release repository used by geotools (and third-party dependencies) -->
     </repository>
   </repositories>
-
 
   <build>
     <plugins>

@@ -1,57 +1,40 @@
 package com.boundless.signal.geoserver.wfs;
 
-import java.io.IOException;
-import java.io.StringWriter;
+import com.boundlessgeo.spatialconnect.schema.SpatialConnect;
 import javax.xml.namespace.QName;
-import org.geotools.geojson.feature.FeatureJSON;
 import org.opengis.feature.simple.SimpleFeature;
 
 public class SignalEvent {
 
-  private String operation;
+  private SpatialConnect.OperationType operation;
 
   private QName layer;
 
   private SimpleFeature feature;
 
-  public SignalEvent(String operation, QName layer, SimpleFeature feature) {
+  public SignalEvent(SpatialConnect.OperationType operation, QName layer, SimpleFeature feature) {
     this.operation = operation;
     this.layer = layer;
     this.feature = feature;
   }
 
-  public String toJson() throws IOException {
-    FeatureJSON fjson = new FeatureJSON();
-    StringWriter writer = new StringWriter();
-
-    fjson.writeFeature(this.feature, writer);
-
-    String featureJson = writer.toString();
-
-    return "{\n  \"operation\": \"" + this.operation + "\","
-            + "\n  \"layer\": \"" + this.getLayerName() + "\","
-            + "\n  \"feature\": " + featureJson + "\n}";
-  }
-
   public String getLayerName() {
-    if (this.layer.getPrefix() != null && !this.layer.getPrefix().isEmpty()) {
-      return this.layer.getPrefix() + "." + this.layer.getLocalPart();
-    } else {
-      return this.layer.getLocalPart();
-    }
+    // I was using prefix.localPart but inserts do not populate the prefix. So there would be an inconsistent behavior
+    // between inserts and updates.
+    return this.layer.getLocalPart();
   }
 
   /**
    * @return the operation
    */
-  public String getOperation() {
+  public SpatialConnect.OperationType getOperation() {
     return operation;
   }
 
   /**
    * @param operation the operation to set
    */
-  public void setOperation(String operation) {
+  public void setOperation(SpatialConnect.OperationType operation) {
     this.operation = operation;
   }
 

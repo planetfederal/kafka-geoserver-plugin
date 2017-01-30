@@ -5,9 +5,11 @@ Plugin for GeoServer adding a WFS-T transaction listener that will send a messag
 ## Running the plugin
 Build a jar and drop it in your `geoserver/WEB-INF/lib` directory.
 
-Use `bootstrap.servers` environment variable when running GeoServer to configure the location of your Kafka. Defaults to `localhost:9092`.
+Use `bootstrap.servers` java system property when running GeoServer to configure the location of your Kafka. Defaults to `localhost:9092`.
 
-The plugin will send events to layer specific topics named `<workspace-prefix>.<layer-name>`. It assumes that kafka is using the setting to auto-create new topics or that the topics will already exist.
+Use `kafkaFormat` java system property when running GeoServer to configure the format of your Kafka messages. Options are `pbf` and `json`. Defaults to `pbf`.
+
+The plugin will send events to layer specific topics. It assumes that kafka is using the setting to auto-create new topics or that the topics will already exist.
 
 POST a WFS-T request to your GeoServer WFS endpoint (http://localhost:8080/geoserver/wfs) and the plugin should fire message(s) to Kafka. See the examples folder for some sample requests.
 
@@ -23,7 +25,7 @@ Ex:
 ```json
 {
   "operation": "insert",
-  "layer": "boundless.countries",
+  "layer": "countries",
   "feature": {
     "type":"Feature",
     "geometry":{"type":"MultiPolygon","coordinates":[[[[0.0,0.0],[0.0,20],[-20,20],[-20,0.0],[0.0,0.0]]]]},

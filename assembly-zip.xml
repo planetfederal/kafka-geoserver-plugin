@@ -24,6 +24,8 @@
         <outputDirectory>/</outputDirectory>
         <includes>
             <include>org.apache.kafka:kafka-clients</include>
+            <include>com.boundlessgeo.spatialconnect:schema</include>
+            <include>com.google.protobuf:protobuf-java</include>
         </includes>
     </dependencySet>
   </dependencySets>
