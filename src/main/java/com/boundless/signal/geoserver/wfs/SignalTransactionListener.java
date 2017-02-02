@@ -7,8 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.namespace.QName;
 import net.opengis.wfs.TransactionResponseType;
 import net.opengis.wfs.TransactionType;
+import org.geoserver.catalog.Catalog;
+import org.geoserver.catalog.NamespaceInfo;
 import org.geoserver.wfs.TransactionEvent;
 import org.geoserver.wfs.TransactionEventType;
 import org.geoserver.wfs.TransactionPlugin;
@@ -25,7 +28,7 @@ import org.opengis.feature.simple.SimpleFeature;
  */
 public class SignalTransactionListener implements TransactionPlugin {
 
-  private static Logger LOG = Logging.getLogger(SignalTransactionListener.class);
+  private static final Logger LOG = Logging.getLogger(SignalTransactionListener.class);
 
   /**
    * Name of the property used to store the events sent to kafka in the transaction request's extended properties.
@@ -34,9 +37,12 @@ public class SignalTransactionListener implements TransactionPlugin {
 
   private final SignalProducer signalProducer;
 
-  public SignalTransactionListener(SignalProducer signalProducer) {
+  private final Catalog catalog;
+
+  public SignalTransactionListener(SignalProducer signalProducer, Catalog catalog) {
     LOG.log(Level.FINE, "SignalTransactionListener Constructor.");
     this.signalProducer = signalProducer;
+    this.catalog = catalog;
   }
 
   /**
@@ -93,9 +99,30 @@ public class SignalTransactionListener implements TransactionPlugin {
           extendedProperties.put(SIGNAL_EVENTS, events);
         }
         // Storing events in a list so they can be sent only after the entire transaction is successful.
-        events.add(new SignalEvent(operation, event.getLayerName(), feature));
+        events.add(new SignalEvent(operation, getLayerName(event.getLayerName()), feature));
       }
     }
+  }
+
+  /**
+   * For some reason WFS-T Inserts do not populate the workspace prefix. It's important to have the workspace prefix for
+   * further down the chain. Fetch it from the Catalog.
+   *
+   * @param name layer name
+   * @return layer name with prefix populated
+   */
+  private QName getLayerName(QName name) {
+    if (name.getPrefix() == null || name.getPrefix().isEmpty()) {
+      LOG.info("Layer prefix not set. Fetching namespace from catalog.");
+      NamespaceInfo namespace = this.catalog.getNamespaceByURI(name.getNamespaceURI());
+      if (namespace != null) {
+        return new QName(name.getNamespaceURI(), name.getLocalPart(), namespace.getPrefix());
+      } else {
+        LOG.log(Level.SEVERE, "Unable to fetch namespace from catalog for URI ({0})", name.getNamespaceURI());
+      }
+    }
+
+    return name;
   }
 
   @Override

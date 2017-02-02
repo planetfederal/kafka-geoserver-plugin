@@ -23,6 +23,7 @@ application directory.
 
   <bean id="signalTransactionListener" class="com.boundless.signal.geoserver.wfs.SignalTransactionListener">
     <constructor-arg ref="signalProducer" />
+    <constructor-arg ref="rawCatalog" />
   </bean>
 
 </beans>

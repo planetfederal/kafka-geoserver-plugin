@@ -32,9 +32,9 @@ public class SignalEventProtobufSerializer implements Serializer<SignalEvent> {
     Geometry geom = (Geometry) feature.getDefaultGeometry();
     SpatialConnect.Feature.Builder featureBuilder = SpatialConnect.Feature.newBuilder()
             .setFid(feature.getID())
-            .setGeometryType(geom.getGeometryType())
-            .setGeometry(ByteString.copyFrom(GEOMETRY_WRITER.write(geom)))
             .putAllProperties(feature.getProperties().stream()
+                    // Skip the geometry property, it will be written later.
+                    .filter(p -> !p.getName().equals(feature.getDefaultGeometryProperty().getName()))
                     // Ignore null properties
                     .filter(p -> p.getName() != null && p.getValue() != null)
                     // Convert the list of Properties to a simple map
@@ -43,12 +43,22 @@ public class SignalEventProtobufSerializer implements Serializer<SignalEvent> {
                             p -> p.getName().getLocalPart(),
                             // Property Value
                             p -> {
+                              // Right now we are just converting all the properties to String.
+                              // TODO: Improve the protobuf to support multiple types.
                               if (p.getValue() != null) {
                                 return p.getValue().toString();
                               } else {
                                 return null;
                               }
                             })));
+
+    // Write the geometry as WKB if it exists
+    if (geom != null) {
+      featureBuilder
+              .setGeometryType(geom.getGeometryType())
+              .setGeometry(ByteString.copyFrom(GEOMETRY_WRITER.write(geom)));
+    }
+
     SpatialConnect.Operation operation = SpatialConnect.Operation.newBuilder()
             .setOperation(event.getOperation())
             .setLayer(event.getLayerName())
