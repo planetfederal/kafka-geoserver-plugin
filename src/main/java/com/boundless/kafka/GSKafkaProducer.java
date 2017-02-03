@@ -1,6 +1,7 @@
-package com.boundless.signal.kafka;
+package com.boundless.kafka;
 
-import com.boundless.signal.geoserver.wfs.SignalEvent;
+import com.boundless.kafka.serializers.KafkaEventJsonSerializer;
+import com.boundless.kafka.serializers.KafkaEventProtobufSerializer;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -12,19 +13,19 @@ import org.geotools.util.logging.Logging;
 
 /**
  * A Kafka producer that will send our events to the appropriate topic. Producer configuration location is specified in
- * the applicationContext.xml (currently signal.properties). The bootstrap.servers property can be specified as a system
- * property. The kafkaFormat system property can be used to change the format of the messages sent to Kafka (json or
- * pbf).
+ * the applicationContext.xml (currently kafka-producer.properties). The bootstrap.servers property can be specified as
+ * a system property. The kafkaFormat system property can be used to change the format of the messages sent to Kafka
+ * (json or pbf).
  */
-public class SignalProducer {
+public class GSKafkaProducer {
 
   public static final String KAFKA_FORMAT_PROPERTY_NAME = "kafkaFormat";
 
-  private static final Logger LOG = Logging.getLogger(SignalProducer.class);
+  private static final Logger LOG = Logging.getLogger(KafkaProducer.class);
 
-  private Producer<String, SignalEvent> producer;
+  private Producer<String, KafkaEvent> producer;
 
-  public SignalProducer(Properties properties) {
+  public GSKafkaProducer(Properties properties) {
     // Set the bootstrap.servers from the system property if present
     if (System.getProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG) != null) {
       properties.setProperty(
@@ -36,22 +37,22 @@ public class SignalProducer {
     // Configure the correct serializer based on the system property if present
     String kafkaFormat = System.getProperty(KAFKA_FORMAT_PROPERTY_NAME);
     if (kafkaFormat != null) {
-      if (SignalEventJsonSerializer.KAFKA_FORMAT.equalsIgnoreCase(kafkaFormat)) {
-        configureSerializer(properties, SignalEventJsonSerializer.class);
-      } else if (SignalEventProtobufSerializer.KAFKA_FORMAT.equalsIgnoreCase(kafkaFormat)) {
-        configureSerializer(properties, SignalEventProtobufSerializer.class);
+      if (KafkaEventJsonSerializer.KAFKA_FORMAT.equalsIgnoreCase(kafkaFormat)) {
+        configureSerializer(properties, KafkaEventJsonSerializer.class);
+      } else if (KafkaEventProtobufSerializer.KAFKA_FORMAT.equalsIgnoreCase(kafkaFormat)) {
+        configureSerializer(properties, KafkaEventProtobufSerializer.class);
       } else {
         LOG.log(Level.WARNING, "Unrecognized kafkaFormat ({0}). Defaulting to {1}.",
-                new Object[]{kafkaFormat, SignalEventProtobufSerializer.KAFKA_FORMAT});
-        configureSerializer(properties, SignalEventProtobufSerializer.class);
+                new Object[]{kafkaFormat, KafkaEventProtobufSerializer.KAFKA_FORMAT});
+        configureSerializer(properties, KafkaEventProtobufSerializer.class);
       }
     }
 
     this.producer = new KafkaProducer<>(properties);
   }
 
-  public void send(SignalEvent event) {
-    LOG.log(Level.FINE, "SignalProducer.send");
+  public void send(KafkaEvent event) {
+    LOG.log(Level.FINE, "GSKafkaProducer.send:\n{0}", event.toString());
     this.producer.send(new ProducerRecord<>(event.getLayerName(), event));
   }
 

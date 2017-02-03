@@ -1,6 +1,6 @@
-package com.boundless.signal.kafka;
+package com.boundless.kafka.serializers;
 
-import com.boundless.signal.geoserver.wfs.SignalEvent;
+import com.boundless.kafka.KafkaEvent;
 import com.boundlessgeo.spatialconnect.schema.SpatialConnect;
 import com.google.protobuf.ByteString;
 import com.vividsolutions.jts.geom.Geometry;
@@ -18,16 +18,16 @@ import org.opengis.feature.simple.SimpleFeature;
 /**
  * Serializes Operation protobuf to Kafka topic.
  */
-public class SignalEventProtobufSerializer implements Serializer<SignalEvent> {
+public class KafkaEventProtobufSerializer implements Serializer<KafkaEvent> {
 
   public static final String KAFKA_FORMAT = "pbf";
 
-  private static final Logger LOG = Logging.getLogger(SignalEventProtobufSerializer.class);
+  private static final Logger LOG = Logging.getLogger(KafkaEventProtobufSerializer.class);
 
   private static final WKBWriter GEOMETRY_WRITER = new WKBWriter();
 
   @Override
-  public byte[] serialize(String string, SignalEvent event) {
+  public byte[] serialize(String string, KafkaEvent event) {
     SimpleFeature feature = event.getFeature();
     Geometry geom = (Geometry) feature.getDefaultGeometry();
     SpatialConnect.Feature.Builder featureBuilder = SpatialConnect.Feature.newBuilder()

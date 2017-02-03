@@ -1,4 +1,4 @@
-package com.boundless.signal.geoserver.wfs;
+package com.boundless.kafka;
 
 import com.boundlessgeo.spatialconnect.schema.SpatialConnect;
 import java.util.logging.Logger;
@@ -9,9 +9,9 @@ import org.opengis.feature.simple.SimpleFeature;
 /**
  * Represents the change made to a single feature during a WFS-T operation. Pass this object to the Kafka serializer.
  */
-public class SignalEvent {
+public class KafkaEvent {
 
-  private static final Logger LOG = Logging.getLogger(SignalEvent.class);
+  private static final Logger LOG = Logging.getLogger(KafkaEvent.class);
 
   /**
    * The type of operation this event represents (INSERT, UPDATE, DELETE).
@@ -28,7 +28,7 @@ public class SignalEvent {
    */
   private SimpleFeature feature;
 
-  public SignalEvent(SpatialConnect.OperationType operation, QName layer, SimpleFeature feature) {
+  public KafkaEvent(SpatialConnect.OperationType operation, QName layer, SimpleFeature feature) {
     this.operation = operation;
     this.layer = layer;
     this.feature = feature;

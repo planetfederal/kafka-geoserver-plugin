@@ -1,6 +1,6 @@
-package com.boundless.signal.kafka;
+package com.boundless.kafka.serializers;
 
-import com.boundless.signal.geoserver.wfs.SignalEvent;
+import com.boundless.kafka.KafkaEvent;
 import java.io.IOException;
 import java.util.Map;
 import java.util.logging.Level;
@@ -12,14 +12,14 @@ import org.geotools.util.logging.Logging;
 /**
  * Serializes Operation JSON to Kafka topic.
  */
-public class SignalEventJsonSerializer implements Serializer<SignalEvent> {
+public class KafkaEventJsonSerializer implements Serializer<KafkaEvent> {
 
   public static final String KAFKA_FORMAT = "json";
 
-  private static final Logger LOG = Logging.getLogger(SignalEventJsonSerializer.class);
+  private static final Logger LOG = Logging.getLogger(KafkaEventJsonSerializer.class);
 
   @Override
-  public byte[] serialize(String string, SignalEvent event) {
+  public byte[] serialize(String string, KafkaEvent event) {
     try {
       String json = toJson(event);
       LOG.log(Level.FINE, "Serializing Kafka Message as JSON:\n{0}", json);
@@ -30,7 +30,7 @@ public class SignalEventJsonSerializer implements Serializer<SignalEvent> {
     }
   }
 
-  private String toJson(SignalEvent event) throws IOException {
+  private String toJson(KafkaEvent event) throws IOException {
     FeatureJSON fjson = new FeatureJSON();
 
     // Normally I would use a library to build this json. Since it is not a direct mapping from SimpleFeature to

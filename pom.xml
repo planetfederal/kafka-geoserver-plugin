@@ -16,10 +16,10 @@
   </parent>
 
   <groupId>org.geoserver.community</groupId>
-  <artifactId>gs-signal</artifactId>
+  <artifactId>gs-kafka</artifactId>
   <packaging>jar</packaging>
   <version>2.11-SNAPSHOT</version>
-  <name>Signal Module</name>
+  <name>Kafka Module</name>
 
   <dependencies>
     <dependency>
@@ -81,7 +81,7 @@
         <artifactId>maven-assembly-plugin</artifactId>
         <version>2.2.2</version>
         <configuration>
-          <finalName>signal</finalName>
+          <finalName>kafka</finalName>
           <outputDirectory>resources/plugins</outputDirectory>
           <descriptors>
             <descriptor>assembly-zip.xml</descriptor>

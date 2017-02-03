@@ -8,21 +8,21 @@ application directory.
 
 <beans>
 
-  <bean id="signalProperties"
+  <bean id="kafkaProducerProperties"
       class="org.springframework.beans.factory.config.PropertiesFactoryBean">
     <property name="locations">
       <list>
-        <value>classpath*:signal.properties</value>
+        <value>classpath*:kafka-producer.properties</value>
       </list>
     </property>
   </bean>
 
-  <bean id="signalProducer" class="com.boundless.signal.kafka.SignalProducer">
-    <constructor-arg ref="signalProperties" />
+  <bean id="kafkaProducer" class="com.boundless.kafka.GSKafkaProducer">
+    <constructor-arg ref="kafkaProducerProperties" />
   </bean>
 
-  <bean id="signalTransactionListener" class="com.boundless.signal.geoserver.wfs.SignalTransactionListener">
-    <constructor-arg ref="signalProducer" />
+  <bean id="kafkaTransactionListener" class="com.boundless.kafka.geoserver.wfs.KafkaTransactionListener">
+    <constructor-arg ref="kafkaProducer" />
     <constructor-arg ref="rawCatalog" />
   </bean>
 

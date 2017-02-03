@@ -1,6 +1,7 @@
-package com.boundless.signal.geoserver.wfs;
+package com.boundless.kafka.geoserver.wfs;
 
-import com.boundless.signal.kafka.SignalProducer;
+import com.boundless.kafka.KafkaEvent;
+import com.boundless.kafka.GSKafkaProducer;
 import com.boundlessgeo.spatialconnect.schema.SpatialConnect;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,23 +27,23 @@ import org.opengis.feature.simple.SimpleFeature;
  * a list in the extendProperties on the TransactionRequest. Then use the afterTransaction handler to make sure the
  * whole transaction was committed before sending the events to Kafka.
  */
-public class SignalTransactionListener implements TransactionPlugin {
+public class KafkaTransactionListener implements TransactionPlugin {
 
-  private static final Logger LOG = Logging.getLogger(SignalTransactionListener.class);
+  private static final Logger LOG = Logging.getLogger(KafkaTransactionListener.class);
 
   /**
    * Name of the property used to store the events sent to kafka in the transaction request's extended properties.
    */
   static final String SIGNAL_EVENTS = "SIGNAL_EVENTS";
 
-  private final SignalProducer signalProducer;
+  private final GSKafkaProducer signalProducer;
 
   private final Catalog catalog;
 
-  public SignalTransactionListener(SignalProducer signalProducer, Catalog catalog) {
-    LOG.log(Level.FINE, "SignalTransactionListener Constructor.");
+  public KafkaTransactionListener(GSKafkaProducer signalProducer, Catalog catalog) {
     this.signalProducer = signalProducer;
     this.catalog = catalog;
+    LOG.log(Level.INFO, "KafkaTransactionListener Started.");
   }
 
   /**
@@ -54,9 +55,11 @@ public class SignalTransactionListener implements TransactionPlugin {
    */
   @Override
   public void afterTransaction(TransactionType request, TransactionResponseType result, boolean committed) {
-    LOG.log(Level.INFO, "SignalTransactionListener.afterTransaction (committed={0})", committed);
+    LOG.log(Level.INFO, "KafkaTransactionListener.afterTransaction (committed={0})", committed);
     if (committed && request.getExtendedProperties().containsKey(SIGNAL_EVENTS)) {
-      for (SignalEvent event : (List<SignalEvent>) request.getExtendedProperties().get(SIGNAL_EVENTS)) {
+      List<KafkaEvent> events = (List<KafkaEvent>) request.getExtendedProperties().get(SIGNAL_EVENTS);
+      LOG.log(Level.FINE, "Sending {0} events to kafka.", events.size());
+      for (KafkaEvent event : events) {
         this.signalProducer.send(event);
       }
     }
@@ -74,7 +77,7 @@ public class SignalTransactionListener implements TransactionPlugin {
     TransactionEventType type = event.getType();
 
     if (LOG.isLoggable(Level.INFO)) {
-      LOG.log(Level.INFO, "SignalTransactionListener.dataStoreChange {0} {1}", new Object[]{event.getLayerName(), type});
+      LOG.log(Level.INFO, "KafkaTransactionListener.dataStoreChange {0} {1}", new Object[]{event.getLayerName(), type});
     }
 
     if (TransactionEventType.POST_INSERT.equals(type)) {
@@ -91,15 +94,15 @@ public class SignalTransactionListener implements TransactionPlugin {
       while (it.hasNext()) {
         SimpleFeature feature = it.next();
         Map extendedProperties = event.getRequest().getExtendedProperties();
-        List<SignalEvent> events;
+        List<KafkaEvent> events;
         if (extendedProperties.containsKey(SIGNAL_EVENTS)) {
-          events = (List<SignalEvent>) extendedProperties.get(SIGNAL_EVENTS);
+          events = (List<KafkaEvent>) extendedProperties.get(SIGNAL_EVENTS);
         } else {
           events = new ArrayList<>();
           extendedProperties.put(SIGNAL_EVENTS, events);
         }
         // Storing events in a list so they can be sent only after the entire transaction is successful.
-        events.add(new SignalEvent(operation, getLayerName(event.getLayerName()), feature));
+        events.add(new KafkaEvent(operation, getLayerName(event.getLayerName()), feature));
       }
     }
   }
