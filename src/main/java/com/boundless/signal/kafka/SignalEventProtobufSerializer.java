@@ -54,14 +54,12 @@ public class SignalEventProtobufSerializer implements Serializer<SignalEvent> {
 
     // Write the geometry as WKB if it exists
     if (geom != null) {
-      featureBuilder
-              .setGeometryType(geom.getGeometryType())
-              .setGeometry(ByteString.copyFrom(GEOMETRY_WRITER.write(geom)));
+      featureBuilder.setGeometry(ByteString.copyFrom(GEOMETRY_WRITER.write(geom)));
     }
 
     SpatialConnect.Operation operation = SpatialConnect.Operation.newBuilder()
             .setOperation(event.getOperation())
-            .setLayer(event.getLayerName())
+            .setSource(event.getLayerName())
             .setFeature(featureBuilder)
             .build();
 
