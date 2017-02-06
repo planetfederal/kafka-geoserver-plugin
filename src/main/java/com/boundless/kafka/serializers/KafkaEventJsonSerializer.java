@@ -53,7 +53,7 @@ public class KafkaEventJsonSerializer implements Serializer<KafkaEvent> {
     // finally convert it all back to String to send over the wire. Seems like to much overhead for such a simple json
     // object. I would consider changing the approach if the json gets much more complex.
     return "{\n  \"operation\": \"" + event.getOperation().name() + "\","
-            + "\n  \"layer\": \"" + event.getLayerName() + "\","
+            + "\n  \"source\": \"" + event.getLayerName() + "\","
             + "\n  \"feature\": " + fjson.toString(event.getFeature()) + "\n}";
   }
 
