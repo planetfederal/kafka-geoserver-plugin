@@ -19,8 +19,8 @@ services:
     image: mdillon/postgis
     ports:
       - '5432:5432'
-    volumes:
-      - $HOME/postgres_data:/var/lib/postgresql/data
+    # volumes:
+      # - $HOME/postgres_data:/var/lib/postgresql/data
   geoserver:
     build:
       context: .
@@ -36,5 +36,5 @@ services:
     ports:
       - '8080:8080'
       - '8000:8000'
-    volumes:
-      - $HOME/geoserver_data:/opt/geoserver/data_dir
+    # volumes:
+      # - $HOME/geoserver_data:/opt/geoserver/data_dir

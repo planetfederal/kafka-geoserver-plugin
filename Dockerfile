@@ -17,7 +17,7 @@ RUN apt-get -y update
 #-------------Application Specific Stuff ----------------------------------------------------
 
 ARG GS_VERSION
-ENV GS_VERSION ${GS_VERSION:-2.9.1}
+ENV GS_VERSION ${GS_VERSION:-2.10.1}
 ENV GEOSERVER_DATA_DIR /opt/geoserver/data_dir
 
 RUN mkdir -p $GEOSERVER_DATA_DIR

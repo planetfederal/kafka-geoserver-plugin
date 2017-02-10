@@ -46,7 +46,7 @@ public class KafkaTransactionListener implements TransactionPlugin {
   private static final Logger LOG = Logging.getLogger(KafkaTransactionListener.class);
 
   /**
-   * Name of the property used to store the events sent to kafka in the transaction request's extended properties.
+   * Name of the property used to store the events sent to Kafka in the transaction request's extended properties.
    */
   static final String SIGNAL_EVENTS = "SIGNAL_EVENTS";
 

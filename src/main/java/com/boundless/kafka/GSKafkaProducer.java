@@ -27,12 +27,15 @@ import org.geotools.util.logging.Logging;
 
 /**
  * A Kafka producer that will send our events to the appropriate topic. Producer configuration location is specified in
- * the applicationContext.xml (currently kafka-producer.properties). The bootstrap.servers property can be specified as
- * a system property. The kafkaFormat system property can be used to change the format of the messages sent to Kafka
- * (json or pbf).
+ * the applicationContext.xml (currently kafka-producer.properties). The "bootstrap.servers" property can be specified
+ * as a Java system property. The "kafkaFormat" Java system property can be used to change the format of the messages
+ * sent to Kafka (json or pbf).
  */
 public class GSKafkaProducer {
 
+  /**
+   * The Java system property to set the Kafka serialization format.
+   */
   public static final String KAFKA_FORMAT_PROPERTY_NAME = "kafkaFormat";
 
   private static final Logger LOG = Logging.getLogger(KafkaProducer.class);
